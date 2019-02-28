@@ -9,6 +9,7 @@
 #https://api.home.nest.com/oauth2/access_token?code={pincode}&client_id={your client id}&client_secret={your client secret}&grant_type=authorization_code
 #Get devie_id by doing this command
 # /usr/bin/curl  --location-trusted -H "Content-Type: application/json" -H "Authorization: Bearer <auhtorization toke>" -X GET https://developer-api.nest.com/devices/thermostats | sed -e 's/[{}]/''/g' |      awk -v k="text" '{n=split($0,a,","); for (i=1; i<=n; i++) print a[i]}'
+#Authorization token from step 4
 
 Auth="<auhtorization token"
 
@@ -32,7 +33,7 @@ curepoch=$(date "--date=$curtime" +%s)
 nestepoch=$(date "--date=$nesttime" +%s)
 DIFFSEC=`expr ${curepoch} - ${nestepoch}`
 
-if [ $DIFFSEC -lt 10 ]
+if [ $DIFFSEC -lt 3660 ]
 then
   if [ $status -ge 50 ] && [ $status -le 100 ]
   then
