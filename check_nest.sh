@@ -13,9 +13,9 @@
 Auth="<auhtorization token"
 
 if [[ -z "$1" ]] || [[ -z "$2" ]]; then
- echo "Missing parameters!"
- echo "Usage: ./check_nest.sh device_id paramter"
- exit 2
+  echo "Missing parameters!"
+  echo "Usage: ./check_nest.sh device_id paramter"
+  exit 2
 fi
 #Get Current room temp
 status=$(curl  --location-trusted -H "Content-Type: application/json" -H "Authorization: Bearer $Auth"  https://developer-api.nest.com/devices/thermostats/$1"/"$2)
@@ -34,23 +34,23 @@ DIFFSEC=`expr ${curepoch} - ${nestepoch}`
 
 if [ $DIFFSEC -lt 10 ]
 then
-	if [ $status -ge 50 ] && [ $status -le 100 ]
-	then
- 		echo "Temp OK $status"
- 		exit 0
-	elif [ $status -lt 50 ]
- 	then
-  		echo "Temp to low $status"
-  		exit 2
-	elif [ $status -gt 100 ]
-  	then
-   		echo "Temp to high $status"
-   		exit 2
-	else
- 		echo "Temp error"
- 		exit 2
-	fi
+  if [ $status -ge 50 ] && [ $status -le 100 ]
+  then
+    echo "Temp OK $status"
+    exit 0
+elif [ $status -lt 50 ]
+  then
+    echo "Temp to low $status"
+    exit 2
+elif [ $status -gt 100 ]
+  then
+    echo "Temp to high $status"
+    exit 2
+  else
+    echo "Temp error"
+    exit 2
+  fi
 else
-	echo "Nest Offline for over two hours"
-	exit 2
+  echo "Nest Offline for over two hours"
+  exit 2
 fi
