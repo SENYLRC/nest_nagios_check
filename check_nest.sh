@@ -12,6 +12,9 @@
 #Authorization token from step 4
 
 Auth="<auhtorization token"
+#Specify the low and high temps
+LowTemp="53"
+HighTemp="95"
 
 if [[ -z "$1" ]] || [[ -z "$2" ]]; then
   echo "Missing parameters!"
@@ -35,17 +38,17 @@ DIFFSEC=`expr ${curepoch} - ${nestepoch}`
 
 if [ $DIFFSEC -lt 3660 ]
 then
-  if [ $status -ge 50 ] && [ $status -le 100 ]
+  if [ $status -ge $LowTemp ] && [ $status -le $HighTemp ]
   then
     echo "Temp OK $status"
     exit 0
-elif [ $status -lt 50 ]
+elif [ $status -lt $LowTemp ]
   then
-    echo "Temp to low $status"
+    echo "Temp might be too cold: $status"
     exit 2
-elif [ $status -gt 100 ]
+elif [ $status -gt $HighTemp ]
   then
-    echo "Temp to high $status"
+    echo "Temp might be too hot: $status"
     exit 2
   else
     echo "Temp error"
