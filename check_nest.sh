@@ -17,22 +17,40 @@ if [[ -z "$1" ]] || [[ -z "$2" ]]; then
  echo "Usage: ./check_nest.sh device_id paramter"
  exit 2
 fi
-
+#Get Current room temp
 status=$(curl  --location-trusted -H "Content-Type: application/json" -H "Authorization: Bearer $Auth"  https://developer-api.nest.com/devices/thermostats/$1"/"$2)
+#Get the last time nest checked in
+lastconnection=$(curl  --location-trusted -H "Content-Type: application/json" -H "Authorization: Bearer $Auth"  https://developer-api.nest.com/devices/thermostats/$1/last_connection)
 
-if [ $status -ge 50 ] && [ $status -le 100 ]
+#Get time from two hours ago
+curtime=$(date -u "+%Y-%m-%d %H:%M:%S")
+#Reformat the nest timestamp
+nesttime1=${lastconnection/T/ }
+nesttime=${nesttime1:1:${#string}-6}
+
+curepoch=$(date "--date=$curtime" +%s)
+nestepoch=$(date "--date=$nesttime" +%s)
+DIFFSEC=`expr ${curepoch} - ${nestepoch}`
+
+if [ $DIFFSEC -lt 10 ]
 then
- echo "Temp OK"
- exit 0
-elif [ $status -lt 50 ]
- then
-  echo "Temp to low"
-  exit 2
-elif [ $status -gt 100 ]
-  then
-   echo "Temp to high"
-   exit 2
+	if [ $status -ge 50 ] && [ $status -le 100 ]
+	then
+ 		echo "Temp OK $status"
+ 		exit 0
+	elif [ $status -lt 50 ]
+ 	then
+  		echo "Temp to low $status"
+  		exit 2
+	elif [ $status -gt 100 ]
+  	then
+   		echo "Temp to high $status"
+   		exit 2
+	else
+ 		echo "Temp error"
+ 		exit 2
+	fi
 else
- echo "Temp error"
- exit 2
+	echo "Nest Offline for over two hours"
+	exit 2
 fi
