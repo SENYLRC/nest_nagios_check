@@ -26,7 +26,7 @@ status=$(curl  --location-trusted -H "Content-Type: application/json" -H "Author
 #Get the last time nest checked in
 lastconnection=$(curl  --location-trusted -H "Content-Type: application/json" -H "Authorization: Bearer $Auth"  https://developer-api.nest.com/devices/thermostats/$1/last_connection)
 
-#Get time from two hours ago
+#Get time from four hours ago
 curtime=$(date -u "+%Y-%m-%d %H:%M:%S")
 #Reformat the nest timestamp
 nesttime1=${lastconnection/T/ }
@@ -36,7 +36,7 @@ curepoch=$(date "--date=$curtime" +%s)
 nestepoch=$(date "--date=$nesttime" +%s)
 DIFFSEC=`expr ${curepoch} - ${nestepoch}`
 
-if [ $DIFFSEC -lt 3660 ]
+if [ $DIFFSEC -lt 14400 ]
 then
   if [ $status -ge $LowTemp ] && [ $status -le $HighTemp ]
   then
@@ -55,6 +55,6 @@ elif [ $status -gt $HighTemp ]
     exit 2
   fi
 else
-  echo "Nest Offline for over two hours"
+  echo "Nest Offline for over four hours $nesttime1"
   exit 2
 fi
