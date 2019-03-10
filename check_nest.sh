@@ -55,6 +55,6 @@ elif [ $status -gt $HighTemp ]
     exit 2
   fi
 else
-  echo "Nest Offline for over four hours $nesttime1"
+  echo "Nest Offline for over four hours $lastconnection"
   exit 2
 fi
