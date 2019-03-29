@@ -26,7 +26,7 @@ status=$(curl  --location-trusted -H "Content-Type: application/json" -H "Author
 #Get the last time nest checked in
 lastconnection=$(curl  --location-trusted -H "Content-Type: application/json" -H "Authorization: Bearer $Auth"  https://developer-api.nest.com/devices/thermostats/$1/last_connection)
 
-#Get time from two hours ago
+#Get time from four hours ago
 curtime=$(date -u "+%Y-%m-%d %H:%M:%S")
 #Reformat the nest timestamp
 nesttime1=${lastconnection/T/ }
@@ -37,7 +37,7 @@ nestepoch=$(date "--date=$nesttime" +%s)
 DIFFSEC=`expr ${curepoch} - ${nestepoch}`
 ping -c 1 developer-api.nest.com > /dev/null
 if  [ $? -eq 0 ]; then
-  if [ $DIFFSEC -lt 3660 ]
+  if [ $DIFFSEC -lt 1440 ]
   then
     if [ $status -ge $LowTemp ] && [ $status -le $HighTemp ]
     then
