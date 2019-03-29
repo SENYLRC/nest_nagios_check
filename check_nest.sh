@@ -35,26 +35,31 @@ nesttime=${nesttime1:1:${#string}-6}
 curepoch=$(date "--date=$curtime" +%s)
 nestepoch=$(date "--date=$nesttime" +%s)
 DIFFSEC=`expr ${curepoch} - ${nestepoch}`
-
-if [ $DIFFSEC -lt 3660 ]
-then
-  if [ $status -ge $LowTemp ] && [ $status -le $HighTemp ]
+ping -c 1 developer-api.nest.com > /dev/null
+if  [ $? -eq 0 ]; then
+  if [ $DIFFSEC -lt 3660 ]
   then
-    echo "Temp OK $status"
-    exit 0
-elif [ $status -lt $LowTemp ]
-  then
-    echo "Temp might be too cold: $status"
-    exit 2
-elif [ $status -gt $HighTemp ]
-  then
-    echo "Temp might be too hot: $status"
-    exit 2
+    if [ $status -ge $LowTemp ] && [ $status -le $HighTemp ]
+    then
+      echo "Temp OK $status"
+      exit 0
+  elif [ $status -lt $LowTemp ]
+    then
+      echo "Temp might be too cold: $status"
+      exit 2
+  elif [ $status -gt $HighTemp ]
+    then
+      echo "Temp might be too hot: $status"
+      exit 2
+    else
+      echo "Temp error"
+      exit 2
+    fi
   else
-    echo "Temp error"
+    echo "Nest Offline for over two hours"
     exit 2
   fi
 else
-  echo "Nest Offline for over two hours"
-  exit 2
+  echo "NEST API Offline"
+  exit 0
 fi
