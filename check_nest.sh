@@ -37,7 +37,7 @@ nestepoch=$(date "--date=$nesttime" +%s)
 DIFFSEC=`expr ${curepoch} - ${nestepoch}`
 ping -c 1 developer-api.nest.com > /dev/null
 if  [ $? -eq 0 ]; then
-  if [ $DIFFSEC -lt 1440 ]
+  if [ $DIFFSEC -lt 14400 ]
   then
     if [ $status -ge $LowTemp ] && [ $status -le $HighTemp ]
     then
